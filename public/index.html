@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.min.js"></script>
+  <title>Socket.io Sample</title>
+</head>
+<body>
+  <button id="join">Join websocket</button>
+
+  <input type="text" id="input-message">
+  <button id="message">Send message</button>
+  <ul id="message-box"></ul>
+
+  <script type="text/javascript">
+    let socket
+
+    const input = document.getElementById('input-message')
+    const messageBox = document.getElementById('message-box')
+
+    document.getElementById('join').addEventListener('click', () => {
+      if (!socket) {
+        socket = new io('http://localhost:3333')
+        initializeSocketListeners(socket)
+      }
+    })
+
+    document.getElementById('message').addEventListener('click', () => {
+      if (!socket || !input.value) return
+
+      console.log(`Sending message: ${input.value}`);
+      socket.emit('message', input.value)
+      input.value = ''
+    })
+
+    function initializeSocketListeners (socketClient) {
+      socketClient.on('new-message', (message) => {
+        console.log(messageBox)
+        const li = document.createElement('li')
+        li.innerText = message
+
+        messageBox.append(li)
+      })
+    }
+    
+  </script>
+</body>
+</html>
